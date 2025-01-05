@@ -1,7 +1,11 @@
-ARG ALPINE_VERSION=3.11
-ARG CADDDY_VERSION=2.0.0
+ARG ALPINE_VERSION=3.21
+ARG CADDY_VERSION=2.9.0
 
-FROM caddy:${CADDDY_VERSION}-alpine as caddy
+FROM golang:alpine as caddy-builder
+
+RUN RUN apk add --no-cache --update git \
+  && go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest \
+  && xcaddy build ${CADDY_VERSION} --with github.com/caddy-dns/cloudflare
 
 FROM alpine:${ALPINE_VERSION} as zt-builder
 
@@ -14,7 +18,7 @@ RUN apk add --no-cache --update clang clang-dev alpine-sdk linux-headers \
 
 FROM alpine:${ALPINE_VERSION}
 
-LABEL maintainer="jonathan.camp@intelecy.com"
+LABEL maintainer="harleylg@gmail.com"
 
 RUN apk add --update --no-cache libc6-compat libstdc++ nss-tools jq
 
@@ -24,7 +28,7 @@ RUN mkdir -p /var/lib/zerotier-one \
   && ln -s /usr/sbin/zerotier-one /usr/sbin/zerotier-idtool \
   && ln -s /usr/sbin/zerotier-one /usr/sbin/zerotier-cli
 
-COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
+COPY --from=caddy-builder /go/caddy /usr/bin/caddy
 
 RUN mkdir /etc/caddy/ && printf "http://\n\nrespond \"ZeroTier sidecar is working! Now you just need a real Caddyfile.\"" > /etc/caddy/Caddyfile
 
