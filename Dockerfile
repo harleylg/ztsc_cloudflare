@@ -1,13 +1,13 @@
 ARG ALPINE_VERSION=3.21
 ARG CADDY_VERSION=2.9.0
 
-FROM golang:alpine as caddy-builder
+FROM golang:alpine AS caddy-builder
 
-RUN RUN apk add --no-cache --update git \
+RUN apk add --no-cache --update git \
   && go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest \
   && xcaddy build ${CADDY_VERSION} --with github.com/caddy-dns/cloudflare
 
-FROM alpine:${ALPINE_VERSION} as zt-builder
+FROM alpine:${ALPINE_VERSION} AS zt-builder
 
 ARG ZT_VERSION=1.8.4
 
