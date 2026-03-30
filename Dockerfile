@@ -11,7 +11,7 @@ FROM alpine:${ALPINE_VERSION} AS zt-builder
 
 ARG ZT_VERSION=1.16.0
 
-RUN apk add --no-cache --update clang clang-dev alpine-sdk linux-headers \
+RUN apk add --no-cache --update clang clang-dev alpine-sdk linux-headers rust cargo openssl-dev pkgconfig \
   && git clone --depth 1 --branch ${ZT_VERSION} https://github.com/zerotier/ZeroTierOne.git /src \
   && cd /src \
   && make -f make-linux.mk zerotier-one
