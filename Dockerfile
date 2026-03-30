@@ -1,5 +1,5 @@
-ARG ALPINE_VERSION=3.21
-ARG CADDY_VERSION=2.9.0
+ARG ALPINE_VERSION=3.23
+ARG CADDY_VERSION=2.11.0
 
 FROM golang:alpine AS caddy-builder
 
@@ -9,7 +9,7 @@ RUN apk add --no-cache --update git \
 
 FROM alpine:${ALPINE_VERSION} AS zt-builder
 
-ARG ZT_VERSION=1.8.4
+ARG ZT_VERSION=1.16.0
 
 RUN apk add --no-cache --update clang clang-dev alpine-sdk linux-headers \
   && git clone --depth 1 --branch ${ZT_VERSION} https://github.com/zerotier/ZeroTierOne.git /src \
